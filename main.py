@@ -32,10 +32,7 @@ def main():
             return
 
         # Step 2: User input for rows to display
-        row_input = st.text_input("Enter row numbers to display (comma-separated, e.g., 33,43). Leave empty to display all:")
-
-        # Prepare image links from the DataFrame
-        image_links = df['link'].tolist()
+        row_input = st.text_input("Enter row numbers to display (comma-separated, e.g., 33,43):")
         
         if row_input:
             try:
@@ -53,11 +50,13 @@ def main():
                 return
             
             # Step 3: Display images for selected rows across all columns
+            image_links = df['link'].tolist()
+            
             cols = st.columns(10)  # Create a grid layout with 10 columns
             
             for row in selected_rows:  # Loop through each selected row
                 for col_index in range(10):  # Loop through each of the 10 columns
-                    index = row + col_index * (len(image_links) // 10)  # Calculate index based on column position
+                    index = row + col_index * len(df) // 10  # Calculate index based on column position
                     
                     if index < len(image_links):
                         image = load_image(image_links[index])
@@ -66,20 +65,6 @@ def main():
                             image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
                             with cols[col_index]:
                                 st.image(image, caption=f"Image {index + 1}", use_container_width=True)
-
-        else:
-            # Step 4: Display all images while maintaining structure
-            cols = st.columns(10)  # Create a grid layout with 10 columns
-            
-            total_images = len(image_links)
-            for i in range(total_images):
-                col_index = i % 10  # Determine which column to use based on index
-                with cols[col_index]:
-                    image = load_image(image_links[i])
-                    if image is not None:
-                        # Resize image for faster loading (optional)
-                        image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
-                        st.image(image, caption=f"Image {i + 1}", use_container_width=True)
 
 if __name__ == "__main__":
     main()
