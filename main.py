@@ -5,7 +5,7 @@ import requests
 from io import BytesIO
 
 # Function to load images from URLs with caching
-@st.cache_data
+# @st.cache_data
 def load_image(url):
     try:
         response = requests.get(url)
