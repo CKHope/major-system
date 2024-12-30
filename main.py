@@ -5,7 +5,7 @@ import requests
 from io import BytesIO
 
 # Function to load images from URLs with caching
-# @st.cache_data
+@st.cache_data
 def load_image(url):
     try:
         response = requests.get(url)
@@ -32,8 +32,8 @@ def main():
             return
 
         # Step 2: User input for rows to display
-        row_input = st.text_input("Enter row numbers to display (comma-separated, e.g., 33,43):")
-        
+        row_input = st.text_input("Enter row numbers to display (comma-separated, e.g., 33,43). Leave empty to display all:")
+
         if row_input:
             try:
                 # Parse the input and convert to a list of integers
@@ -49,9 +49,8 @@ def main():
                 st.warning("No valid rows selected.")
                 return
             
-            # Step 3: Display images for selected rows across all columns
+            # If valid rows are provided, display only those rows
             image_links = df['link'].tolist()
-            
             cols = st.columns(10)  # Create a grid layout with 10 columns
             
             for row in selected_rows:  # Loop through each selected row
@@ -65,6 +64,20 @@ def main():
                             image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
                             with cols[col_index]:
                                 st.image(image, caption=f"Image {index + 1}", use_container_width=True)
+
+        else:
+            # Step 3: Display all images if no input is provided
+            image_links = df['link'].tolist()
+            cols = st.columns(10)  # Create a grid layout with 10 columns
+            
+            for i in range(len(image_links)):
+                col_index = i % 10  # Determine which column to use based on index
+                with cols[col_index]:
+                    image = load_image(image_links[i])
+                    if image is not None:
+                        # Resize image for faster loading (optional)
+                        image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
+                        st.image(image, caption=f"Image {i + 1}", use_container_width=True)
 
 if __name__ == "__main__":
     main()
