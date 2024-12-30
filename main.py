@@ -49,20 +49,21 @@ def main():
                 st.warning("No valid rows selected.")
                 return
             
-            # Step 3: Display images for selected rows
+            # Step 3: Display images for selected rows across all columns
             image_links = df['link'].tolist()
             
             cols = st.columns(10)  # Create a grid layout with 10 columns
             
-            for i in range(10):  # Loop through each of the 10 columns
-                with cols[i]:
-                    for j in range(100):  # Each column can have up to 100 images
-                        index = i * 100 + j  # Calculate the correct index for the image link
-                        if index in selected_rows:
-                            image = load_image(image_links[index])
-                            if image is not None:
-                                # Resize image for faster loading (optional)
-                                image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
+            for row in selected_rows:  # Loop through each selected row
+                for col_index in range(10):  # Loop through each of the 10 columns
+                    index = row + col_index * len(df) // 10  # Calculate index based on column position
+                    
+                    if index < len(image_links):
+                        image = load_image(image_links[index])
+                        if image is not None:
+                            # Resize image for faster loading (optional)
+                            image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
+                            with cols[col_index]:
                                 st.image(image, caption=f"Image {index + 1}", use_container_width=True)
 
 if __name__ == "__main__":
