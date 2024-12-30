@@ -46,7 +46,7 @@ def main():
                         if image is not None:
                             # Resize image for faster loading (optional)
                             image.thumbnail((150, 150))  # Resize to thumbnail size (150x150)
-                            st.image(image, caption=f"Image {index + 1}", use_column_width=True)
+                            st.image(image, caption=f"Image {index + 1}", use_container_width=True)
 
 if __name__ == "__main__":
     main()
